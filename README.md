@@ -6,6 +6,7 @@
 > - Optimizing game states,
 > - Designing GUI (+ Chaining),
 > - Secure communications `(client->server, server->client)`
+> 
 > Feel free to copy and paste the modules from Packages (this is meant to be a resource used by developers)
 
 > [!IMPORTANT]
