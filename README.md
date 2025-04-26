@@ -1,19 +1,21 @@
 # VexKit 👾
-A light-weight framework that's guaranteed to ease your experience in game development that handles many multiple tasks.
-If you've came here, and wonder how to use it, you're in the right place!
-Documentations (everything you need to know) are below.
+> [!NOTE]
+> VexKit is a very lightweight framework, that can be used to help you in game development, while also reducing time taken.
+> This framework can be used for:
+> - Saving data,
+> - Optimizing game states,
+> - Designing GUI (+ Chaining),
+> - Secure communications `(client->server, server->client)`
+> Feel free to copy and paste the modules from Packages (this is meant to be a resource used by developers)
 
-## But before we continue, here are credits I highly want to note here:
-
-**PS/Xbox check:** https://devforum.roblox.com/t/is-there-anyway-to-tell-if-a-person-is-on-an-xbox-or-a-ps4ps5/2645926/12
-
-**spr:** https://github.com/Fraktality/spr
-
-#### (both are goated, tysm)
-
-<div style="background-color: transparent; border: 4px solid yellow; padding: 15px; margin: 10px 0; border-radius: 5px; color: black;">
-  <strong>Warning!</strong> Be careful, this is important.
-</div>
+> [!IMPORTANT]
+> Before be begin, I would like to credit these people for:
+> 
+> **PS/Xbox check:** https://devforum.roblox.com/t/is-there-anyway-to-tell-if-a-person-is-on-an-xbox-or-a-ps4ps5/2645926/12
+>
+> **spr:** https://github.com/Fraktality/spr
+>
+> Thank you both, I appreciate y'all.
 
 # Documentation 📃
 ## Core ❤️
@@ -22,7 +24,8 @@ You can convert Vector3s, Vector2s and CFrames to tables if required.
 Making Promises via VexKit is possible with the core aswell.
 
 ### How to convert Vectors or CFrames to tables:
-⚠️ This is required if you are sending position data to the server, as this data can't be compiled to JSON.
+> [!IMPORTANT]
+> This is required if you are sending position data to the server, as this data can't be compiled to JSON.
 
 CFrames (`Vex.Core.CFrameToTable`):
 ```luau
@@ -60,6 +63,19 @@ Or you can make them using:
 ```luau
 VexKit.Core:NewPromise(function(res, rej) end)
 ```
+> [!TIP]
+> To get the resolved values without using `:andThen()`,
+>
+> do for example:
+>
+> ```luau
+> local IsToggled = VexKit.Core.Promise.new(function(res, rej)
+>    res(true)
+> end)._value
+> 
+> print(IsToggled) --> true
+> ```
+
 ## Input 🎮
 ### `Input:GetDevice()`
 `:GetDevice()` returns if the player is either on "Keyboard and Mouse" (PC), "Console" (Xbox/PlayStation), "VR", "Phone" (Phone/Tablet), and obviously "Unknown"
@@ -76,6 +92,19 @@ print(
 
 ### `Input:IsTyping(): boolean`
 `:IsTyping()` will return true if the user has focused a TextBox, otherwise false.
+> [!TIP]
+> You can use `:IsTyping()` when using `:OnKeyPress`, here's an example:
+> ```luau
+> Vex.Input:OnKeyPress({Enum.KeyCode.Q, Enum.KeyCode.ButtonA}, function(Key, Held)
+>    if not Vex.Input:IsTyping() then
+>        if Key == Enum.KeyCode.Q then
+>            print("Player pressed Q on their keyboard!")
+>        elseif Key == Enum.KeyCode.ButtonA then
+>            print("Player pressed A on their gamepad!")
+>        end
+>    end
+>  end)
+> ```
 
 Example:
 ```luau
@@ -142,17 +171,22 @@ end
 ```
 
 ### Disconnecting gamepad auto-detect (if you don't need it):
-⚠️ This is ran everytime the module is required. If this isn't needed, you can disconnect it under the script or somewhere else.
-```luau
-Input._AutoDetectControllerConnection:Disconnect()
-```
+> [!CAUTION]
+> This is connected everytime the module is required. If this isn't needed, you can disconnect it under the script or somewhere else.
+>
+> Otherwise, you can go to VexKit -> Packages -> Input, scrolldown and remove the entire `Input._AutoDetectControllerConnection` variable definition.
+> ```luau
+> Input._AutoDetectControllerConnection:Disconnect()
+> ```
 ## NetBridge
 NetBridge is a module that keeps communication between the client and server safe and secure, loud and crystal clear.
 
-⚠️ **You can't pass instances as arguments vector3's and/or CFrame's (when calling the remote). Instead you can pass them as a table (use `VexKit.Core.CFrame2Table` for this task)**
-⚠️ **If you pass only 1 argument, you NEED to pack it into a table (using `table.pack` or such) and then calling `table.unpack` on the server to extract it. Or just do Data[1].**
+> [!IMPORTANT]
+> **You can't pass instances as arguments vector3's and/or CFrame's (when calling the remote). Instead you can pass them as a table (use `VexKit.Core.CFrame2Table` for this task)**.
+>
+> **If you pass only 1 argument, you NEED to pack it into a table (using `table.pack` or such) and then calling `table.unpack` on the server to extract it. Or just do Data[1].**
 
-## `NetBridge:Subscribe(<string> Name, <function> Callback (Player, ...))`
+### `NetBridge:Subscribe(<string> Name, <function> Callback (Player, ...))`
 ``NetBridge:Subscribe`` subscribes the Name as a remote which can be called by the client using `NetBridge:Request` or `NetBridge:Call`.
 
 Example:
@@ -170,18 +204,168 @@ which returns a promise.
 
 You can even call this on the clientside (assuming you want to request client stuff from the server using a player), example:
 
-⚠️ Code below is meant to be ran on the clientside.
+> [!WARNING]
+> **The code below is meant to be ran on the client**.
 ```luau
 Vex.NetBridge:Subscribe("SetBaseplatePosition", function()
     return workspace.Baseplate.Position
 end)
 ```
 
-⚠️ **Making the first argument (Target Player) undefined will make it call every clients, which will make the returned data from clients undefined.**
+## `NetBridge:Request` (called on serverside)
+
+> [!WARNING]
+> **Making the first argument (Target Player) undefined will make it call every clients, which will make the returned data from clients undefined.**
 
 Example:
 ```luau
 local Position = SetBaseplatePosition:Request(TargettedPlayer, "GetCurrentBaseplatePosition") --> Vector3
 print("Gotten position from the player:", Position)
 ```
+## `NetBridge:Request` (called on clientside)
+`Vex.NetBridge:Request` returns a Promise object.
+Here's an example:
+```luau
+local NetBridge = Vex.NetBridge
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local CreatedRig
 
+NetBridge:Request("Remotes/CreateRig"):andThen(require(function(Rig: Model)
+	if not Rig then
+    -- assuming PlayerRigs is a folder in ReplicatedStorage..
+		Rig = ReplicatedStorage.PlayerRigs:WaitForChild(LocalPlayer.UserId)
+	end
+
+	Rig.Parent = ReplicatedStorage.PlayerRigs
+  CreatedRig = Rig
+end))
+
+-- You can do something with the rig here
+-- But since this is useless now, it will be removed.
+Rig:Destroy()
+```
+> [!TIP]
+> Instead of doing  `NetBridge:Request("Name Here", ...):andThen(function()`,
+>
+> You can make a module inside of that script, make it return a function, and then write:
+> 
+> ``NetBridge:Request("Name Here", ...):andThen(require(script.ModuleNameGoesHere))``
+
+> [!IMPORTANT]
+> Both `:Subscribe` and `:Request` can be called on the client and server side, but please note that:
+>
+> The usage of either changes depending on the context.
+>
+> For example, if you use `:Request` on the serverside, it doesn't return a Promise object but the arguments the client has given.
+>
+>  You only get Promise objects if you use `:Request` on the client.
+
+## Database 💾
+### ``Database:GetDataStore(Name: string)``
+> [!TIP]
+> This datastore module is literally Roblox's Data Store, however rewritten to:
+> - be able to list every key in a store
+> - look like if it was written in a different language
+Example:
+```luau
+local NewDataStore = Vex.Database:GetDataStore("NewDataStore")
+```
+### ``Database:Get(Key: string | number): Promise``
+> [!IMPORTANT]
+> This option returns a promise.
+>
+> To get just the value (and not calling `:andThen()`), as shown before, you can use:
+> ```luau
+> local PlayerData = DataStore:Get(1)._value
+> ```
+``Vex.Database:Get`` returns a Promise which contains the value of given key.
+Examples:
+```luau
+local Data1, Data2
+DataStore:Get(1):andThen(function(GivenData)
+    Data1 = GivenData
+end)
+
+Data2 = DataStore:Get(2)._value
+```
+### ``Database:Set(Key: string | number, ...): Promise``
+> [!NOTE]
+> If you wish to do something after setting the data of the key, since this returns a Promise object,
+> you can chain like this (or by learning, using this example):
+> ```lua
+> DataStore:Set(1, {
+>    Stage = 2,
+>    FollowingQuest = "Find out where you are"
+> }):andThen(function(success)
+>    print("Successfuly set data of the key \"1\"!")
+> end):catch(warn)
+> ```
+Example:
+```luau
+DataStore:Set(5, { Money = 10 })
+```
+## ``Database:Remove(Key: string): Promise``
+> [!NOTE]
+> This method returns a Promise object too, meaning you can chain methods.
+>
+> Look above at `Database:Set` for a example.
+Example:
+```lua
+DataStore:Remove(1):andThen(function(success)
+    print("Successfuly removed data for the key \"1\"!")
+end):catch(warn)
+```
+## Signal ⚡
+``Vex.Signal`` is a module that allows you to simulate BindableEvents (running multiple functions at once).
+Here's an example:
+```lua
+local newSignal = Vex.Signal.new()
+newSignal:Connect(function(...)
+    print(...)
+end)
+-- prints "Hello world!" after 5 seconds
+task.delay(5, newSignal.Fire, newSignal, "Hello world!")
+```
+Signal allows you to help in creating modules with functionality without creating BindableEvents, allowing you to simplify code.
+## Asset 📑
+``Vex.Asset`` allows you to easily preload assets, even giving you extra functionality for making loading screens.
+> [!IMPORTANT]
+> `:PreloadAsync` returns a Promise.
+
+To preload these, you can call ``Vex.Asset:PreloadAsync``, example:
+```luau
+Vex.Asset:PreloadAsync({ "rbxassetid://0", AnimationObjects }):andThen(function()
+    print("Successfuly preloaded these items!")
+end):catch(warn)
+```
+
+However, to make loading screens, you can use ``Vex.Asset.Loader``.
+Here is a example how:
+```luau
+local Loader = Vex.Asset.Loader.new()
+Loader:AddItemsAsync({workspace, game:GetService("ReplicatedStorage")})
+Loader:BeginPreloading(function(Percentage, AssetFetchStatus: Enum.AssetFetchStatus)
+    local Scale = Percentage / 100
+    -- Change the size of some bar to the scale
+    -- Change some text to the percentage
+end)
+
+task.delay(1.5, function()
+    Loader:Skip()
+end)
+```
+You can also add one singular item by running:
+```luau
+Loader:AddItemAsync(Item)
+```
+---
+> [!NOTE]
+> Written by [@vexgamedev](https://github.com/vexgamedev/)
+> 
+> This took alot of effort to write,
+> 
+> also this was getting written when I was tired so please don't judge.
+> 
+> Thanks for reading, and enjoy using VexKit!
+
+---
