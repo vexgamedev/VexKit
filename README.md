@@ -3,7 +3,7 @@ A light-weight framework that's guaranteed to ease your experience in game devel
 If you've came here, and wonder how to use it, you're in the right place!
 Documentations (everything you need to know) are below.
 
-## But before we continue, here are credits I highly wan't to note here:
+## But before we continue, here are credits I highly want to note here:
 
 **PS/Xbox check:** https://devforum.roblox.com/t/is-there-anyway-to-tell-if-a-person-is-on-an-xbox-or-a-ps4ps5/2645926/12
 
