@@ -1,8 +1,5 @@
--- GUI || @vexgamedev
--- Some high-tech advanced stuff, would recommend if you want to make your code longer
-
 local UserInterface = {}
-UserInterface.spr = require(script:WaitForChild("SpringDrivenMotion"))
+UserInterface.spr = require(script.Parent.Spr)
 UserInterface.__index = UserInterface
 UserInterface.Component = {}
 
