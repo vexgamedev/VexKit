@@ -2,13 +2,9 @@
 --> Vex's Kit || designed and made by @vexgamedev
 --> Aiming to help you with simplicity, and optimizations
 --> Whether it's GUI design, network from client -> server, server -> client, you got it.
---> Need documentations, tutorials how to use this module?
---> Extend this module with the arrow in Explorer, and then extend `Documentation` with the arrow,
---> Then pick any neeeded service/module you wish to learn
+--> View this link for documentation (scroll down):
+--> https://github.com/vexgamedev/VexKit/
 --//
-
--- Documentation:
--- https://github.com/vexgamedev/VexKit/
 
 local Packages = script:WaitForChild("Packages")
 local VexKit = {
