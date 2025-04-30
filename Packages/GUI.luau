@@ -30,12 +30,13 @@ export type VexButton = {
 --	done: () -> ScreenGui
 --}
 
-function UserInterface.new(Name: string?, Parent: Instance?): typeof(UserInterface)
+function UserInterface.new(Name: string?, Parent: Instance?, ResetOnSpawn: boolean?): typeof(UserInterface)
 	local self = setmetatable({}, UserInterface)
 	self._parent = nil
 	self._instance = Instance.new("ScreenGui")
 	self._instance.Name = Name or "ScreenGui"
 	self._instance.Parent = Parent
+	self._instance.ResetOnSpawn = ResetOnSpawn or false
 	return self
 end
 
