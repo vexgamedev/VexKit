@@ -2,18 +2,28 @@ local Net = { XOR = require(script.XOR) }
 local Promise = require(script.Parent.Core.Promise)
 local HttpService = game:GetService("HttpService")
 
+if not script:GetAttribute("NAME") then
+	script:SetAttribute("NAME", math.random(12, 54))
+end
+
+if not script:GetAttribute("ARG") then
+	script:SetAttribute("ARG", math.random(12, 54))
+end
+
 export type Callback = (Player, ...any) -> ()
+local KeyName = script:GetAttribute("NAME")
+local KeyArg = script:GetAttribute("ARG")
 
 function Net.CreateRemote(Name: string, Callback: Callback?): RemoteFunction
 	local Remote = Instance.new("RemoteFunction", script)
-	Remote.Name = Net.XOR:DoIt(Name, 0x19)
+	Remote.Name = Net.XOR:DoIt(Name, KeyName)
 	Remote.OnServerInvoke = if typeof(Callback) == "function" then Callback else function() end
 	return Remote
 end
 
 function Net:Subscribe(Name: string, Callback: Callback)
 	if game:GetService("RunService"):IsClient() then
-		local Remote: RemoteFunction? = script:FindFirstChild(Net.XOR:DoIt(Name, 0x19))
+		local Remote: RemoteFunction? = script:FindFirstChild(Net.XOR:DoIt(Name, KeyName))
 		if Remote then
 			Remote.OnClientInvoke = Callback
 		end
@@ -24,7 +34,7 @@ function Net:Subscribe(Name: string, Callback: Callback)
 		if typeof(Data) == "buffer" and typeof(Length) == "number" then
 			local ok, given = pcall(buffer.readstring, Data, 0, Length)
 			if ok then
-				given = Net.XOR:DoIt(given, 0x11)
+				given = Net.XOR:DoIt(given, KeyArg)
 				local ok2, given2 = pcall(HttpService.JSONDecode, HttpService, given)
 				if ok2 then
 					return Callback(Player, given2)
@@ -70,18 +80,15 @@ end
 function Net:Request(Name: string, ...)
 	local Data = table.pack((...)or{})
 	assert(typeof(Name) == "string", "Name is a improper type [Expected string, gotten [" .. typeof(Name) .. "]]")
-	Name = Net.XOR:DoIt(Name, 0x19)
+	Name = Net.XOR:DoIt(Name, KeyName)
 	return Promise.new(function(res, rej)
 		local Remote: RemoteFunction? = script:FindFirstChild(Name)
 		if Remote and Remote:IsA("RemoteFunction") then
-			--print('Found remote:', Remote:GetFullName())
 			local ok, given = pcall(HttpService.JSONEncode, HttpService, table.unpack(Data))
 			if ok then
-				given = Net.XOR:DoIt(given, 0x11)
-				--print("Encrypted arguments:", given)
+				given = Net.XOR:DoIt(given, KeyArg)
 				local SendData = buffer.create(#given)
 				buffer.writestring(SendData, 0, given, #given)
-				--print("Buffer with arguments:", SendData)
 				return res(
 					Remote:InvokeServer(
 						SendData, #given
