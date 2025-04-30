@@ -366,14 +366,14 @@ Loader:AddItemAsync(Item)
 ```
 ## GUI 📑
 ``Vex.GUI`` is a framework prioritizing efficiency and speed whilst coding, with incredible functions including chaining.
-### `GUI.new(Name: string?, Parent: Instance?)`
-GUI.new takes 2 arguments, first is `Name` which takes only string (can be `undefined` now), and then Parent which MUST either be `undefined` or a `Instance` object.
+### `GUI.new(Name: string?, Parent: Instance?, ResetOnSpawn: Boolean?)`
+GUI.new takes 2 arguments, first is `Name` which takes only string (can be `undefined` now), and then Parent which MUST either be `undefined` or a `Instance` object, and the third can be a `boolean` (or `undefined`).
 > [!CAUTION]
 > `:done()` method returns the parent of the object, which is highly necessary for chaining.
 > **IF** you have done every `Instance` objects you needed, you can use :done() to exit out of the chain and get the **NewGui (ScreenGui)** object, or call `:finished()`.
 ```luau
 local localPlayer = game:GetService("Players").LocalPlayer
-local NewGui = GUI.new("ScreenGui", localPlayer:WaitForChild("PlayerGui"))
+local NewGui = GUI.new("ScreenGui", localPlayer:WaitForChild("PlayerGui"), false)
 	:done()
 ```
 ### Creating elements (Frames, ImageLabels, TextLabels, TextButtons, Rounding Corners, ETC)
@@ -434,7 +434,7 @@ local NewGui = GUI.new("ScreenGui", localPlayer:WaitForChild("PlayerGui"))
 		:finished() -- Return the card component as the Instance (you receive the Frame object)
 	end
 
-	local screenGui = vexgui.new("Card Displayer", game.Players.LocalPlayer:WaitForChild("PlayerGui"))
+	local screenGui = vexgui.new("Card Displayer", game.Players.LocalPlayer:WaitForChild("PlayerGui"), false)
 		:frame("Cards Menu")
 			:imageLabel("http://www.roblox.com/asset/?id=117996870926569") -- Create a new ImageLabel (this shows a shadow FYI)
 				:size(UDim2.fromScale(1.7, 1.7)) -- Resize it to be 170% width and height (shadow visibility)
