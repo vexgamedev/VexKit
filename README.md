@@ -359,6 +359,177 @@ You can also add one singular item by running:
 ```luau
 Loader:AddItemAsync(Item)
 ```
+## GUI 📑
+``Vex.GUI`` is a framework prioritizing efficiency and speed whilst coding, with incredible functions including chaining.
+### `GUI.new(Name: string?, Parent: Instance?)`
+GUI.new takes 2 arguments, first is `Name` which takes only string (can be `undefined` now), and then Parent which MUST either be `undefined` or a `Instance` object.
+> [!CAUTION]
+> `:done()` method returns the parent of the object, which is highly necessary for chaining.
+> **IF** you have done every `Instance` objects you needed, you can use :done() to exit out of the chain and get the **NewGui (ScreenGui)** object, or call `:finished()`.
+```luau
+local localPlayer = game:GetService("Players").LocalPlayer
+local NewGui = GUI.new("ScreenGui", localPlayer:WaitForChild("PlayerGui"))
+	:done()
+```
+### Creating elements (Frames, ImageLabels, TextLabels, TextButtons, Rounding Corners, ETC)
+
+<details>
+  <summary>Every methods and their usages in this example code below</summary>
+
+  - FYI, the descriptions of what these funxtions do are going to be commented (the ones already done will remain empty as they were already explained)
+  
+  ```lua
+	local spr = vexgui.spr
+
+	function newCard(title: string)
+		title = string.format("%s  ", title)
+		return vexgui.Component.new("Frame", "Card") -- Create a new Frame component named "Card"
+			:roundCorners(UDim.new(0, 10)) -- Rounds the corners with the scale of 0 and offset 10
+			:size(UDim2.fromOffset(90, 130)) -- Modifies the size into the specified UDim2
+			:bgColor(Color3.fromRGB(43, 43, 43)) -- Modifies the background color into the provided Color3
+			:borderSizePixel(0) -- Set the border size pixel to 0
+			:zindex(2) -- Modify the ZIndex to 2 to make this show above the shadow
+			:label("Title", title) -- Create a new title frame with the text of "title"
+				-- Name: string, Text: string
+				-- Example: :laabel("Label's Name", "Hello world! is what says on this TextLabel")
+				:txtColor(Color3.fromRGB(177, 177, 177)) -- Modify the text color into said Color3
+				:transparency(1) -- Modify the background transparency to 1
+				:textXAlignment(Enum.TextXAlignment.Right) -- Set the Text X alignment
+				:textYAlignment(Enum.TextYAlignment.Top) -- Set the Text Y alignment
+				:font(Enum.Font.GothamBold) -- Modify the font into GothamBold
+				:textScaled(true) -- Make the text scaled (change FontSize upon Size modification)
+				:size(UDim2.fromScale(1, 0.1)) -- Make the title label 100% width and 10% height (text visibility)
+				:zindex(2) -- Make the ZIndex above shadow's visibility priority
+				:done() -- Exit the chaining back into the Card component
+			:onMouseEnter(function(frame: Frame) -- New callback when the player hovers their mouse on the frame
+				-- frame is the Card component that you can modify directly here
+				print(frame) --> Card
+				spr.target(frame, 1, 1.3, {
+					BackgroundColor3 = Color3.fromRGB(70, 70, 70),
+				})
+				spr.target(frame:WaitForChild("Title"), 1, 1.3, {
+					TextColor3 = Color3.fromRGB(210, 210, 210),
+				})
+				spr.target(frame:FindFirstChildOfClass("UICorner"), 1, 1.3, {
+					CornerRadius = UDim.new(0, 13)
+				})
+			end)
+			:onMouseLeave(function(frame: Frame) -- New callback when the player moves their mouse away from the frame
+				-- frame is the Card component that you can modify directly here
+				spr.target(frame, 1, 1.3, {
+					BackgroundColor3 = Color3.fromRGB(43, 43, 43),
+				})
+				spr.target(frame:WaitForChild("Title"), 1, 1.3, {
+					TextColor3 = Color3.fromRGB(177, 177, 177),
+				})
+				spr.target(frame:FindFirstChildOfClass("UICorner"), 1, 1.3, {
+					CornerRadius = UDim.new(0, 10)
+				})
+			end)
+		:finished() -- Return the card component as the Instance (you receive the Frame object)
+	end
+
+	local screenGui = vexgui.new("Card Displayer", game.Players.LocalPlayer:WaitForChild("PlayerGui"))
+		:frame("Cards Menu")
+			:imageLabel("http://www.roblox.com/asset/?id=117996870926569") -- Create a new ImageLabel (this shows a shadow FYI)
+				:size(UDim2.fromScale(1.7, 1.7)) -- Resize it to be 170% width and height (shadow visibility)
+				:pos(UDim2.fromScale(0.5, 0.5), Vector2.one/2) -- Center the shadow in the frame
+				-- #1st argument is a UDim2 (Position), and 2nd is a Vector2 (AnchorPoint)
+				:imgTransparency(0.4) -- Change the transparency of the image
+				:transparency(1) -- Change the background transparency of the image
+				:imgColor(Color3.fromRGB(147, 97, 255)) -- Change the image color
+				:done() -- Exit back to the Cards Menu frame chain
+			:pos(UDim2.fromScale(0.5, 0.5), Vector2.one / 2) -- Center the frame perfectly in the screen
+			:size(UDim2.fromScale(0.32, 0.8)) -- 32% width, 80% height of the screen
+			:bgColor(Color3.fromRGB(13, 13, 13)) -- Replace the color of the background to be black
+			:roundCorners(UDim.new(0, 16)) -- Round the frame's corners with the radius of 16 (Offset)
+			:borderSizePixel(0) -- Change the border size pixel so there's no ugly black borders that weren't invited
+			:zindex(2) -- Same story, make the Frame ZIndex to 2 to be over the purple shadow
+			:frame("Cards List") -- Create a new cards list frame
+				:zindex(2) -- Same story (yada yada)
+				:borderSizePixel(0) -- Same story once again
+				:layout("grid")-- :layout("vertical", "horizontal", "grid")
+					:alignX(Enum.HorizontalAlignment.Center) -- Objects will appear in the center middle horizontally
+					:alignY(Enum.VerticalAlignment.Center) -- Objects will appear in the center middle vertically
+					:cellSize(UDim2.fromOffset(150, 173)) -- Modify the cell size
+					:done() -- Exit the grid layout into the Cards List frame
+			:size(UDim2.fromScale(1, 1)) -- Change the size to 100% of the GUI (so every cards fit)
+			:transparency(1) -- Set the transparency to 1 so only Card Displayer is visible
+			:done() -- Exit the chain to Card Displayer
+		:done() -- Exit the chain to the Screen GUI
+		:finished() -- Extract the ScreenGui instance here
+
+	for i = 1, 9 do
+		newCard("Test title here").Parent = screenGui:FindFirstChild("Cards Menu"):FindFirstChild("Cards List")
+	end
+  ```
+</details>
+
+To create frames after a GUI was defined, we can do:
+```luau
+GUI.new(...):
+	:frame(Name: string) -- Create a new Frame object with the specified Name in that ScreenGui
+		:done() -- We're finished with the frame, exit back to the ScreenGui chain
+	:done() -- Exit chaining and return ScreenGui
+```
+There are even buttons, labels, imagelabels and grid layouts.
+<details>
+  <summary>To create buttons, there's a method `:button(Name: string, Text: string)`</summary>
+	
+  ```luau
+  GUI.new(...)
+  	:button("Test Button", "Click this for a Hello World!")
+  		:size(UDim2.fromScale(1, 0.3)
+  		:position(UDim2.fromScale(0.5, 0.5), Vector2.one/2)
+  		:font(Enum.Font.Code)
+  		:txtColor(Color3.fromRGB(255, 255, 255))
+  		:bgColor(Color3.fromRGB(40, 40, 40))
+  		:onClick(function(TestButton)
+  			print("Hello World! [Player clicked Test Button]")
+  		end)
+		:onRightClick(function(TestButton)
+			print("Ooo fancy [Player right clicked Test Button]")
+		end)
+  ```
+</details>
+
+<details>
+  <summary>To create TextLabels, there's a method `:label(Name: string, Text: string)`</summary>
+	
+  ```luau
+  GUI.new(...)
+  	:label("Test Label", "Hover this for brighter text!")
+  		:size(UDim2.fromScale(1, 0.3)
+  		:position(UDim2.fromScale(0.5, 0.5), Vector2.one/2)
+  		:font(Enum.Font.Code)
+  		:txtColor(Color3.fromRGB(199, 199, 199))
+  		:bgColor(Color3.fromRGB(40, 40, 40))
+  		:onMouseEnter(function(TestLabel)
+  			TestLabel.TextColor3 = Color3.fromRGB(230, 230, 230)
+  		end)
+		:onMouseLeave(function(TestLabel)
+			TestLabel.TextColor3 = Color3.fromRGB(199, 199, 199)
+		end)
+  ```
+</details>
+
+<details>
+  <summary>To create ImageLabels, there's a method `:imageLabel(Icon: string)`</summary>
+	
+  ```luau
+  GUI.new(...)
+  	:imageLabel("http://www.roblox.com/asset/?id=117996870926569")
+  		:size(UDim2.fromScale(1, 0.3)
+  		:position(UDim2.fromScale(0.5, 0.5), Vector2.one/2)
+  		:font(Enum.Font.Code)
+  		:imgColor(Color3.fromRGB(199, 199, 199))
+		:imgTransparency(0.43)
+  		:transparency(1) -- Background Transparency
+  ```
+</details>
+
+## More documentations soon, if you really need to learn more, reffer to the example above titled _Every methods and their usages in this example code below_
+
 ---
 > [!NOTE]
 > Written by [@vexgamedev](https://github.com/vexgamedev/)
