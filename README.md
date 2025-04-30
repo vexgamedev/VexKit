@@ -1,22 +1,27 @@
 # VexKit 👾
-> [!NOTE]
-> VexKit is a very lightweight framework, that can be used to help you in game development, while also reducing time taken.
-> This framework can be used for:
-> - Saving data,
-> - Optimizing game states,
-> - Designing GUI (+ Chaining),
-> - Secure communications `(client->server, server->client)`
-> 
-> Feel free to copy and paste the modules from Packages (this is meant to be a resource used by developers)
+## What is this?
+**VexKit** is a very light-weight framework/kit module for developers to ease and save time during coding, whether it comes for securing remotes from getting spied or creating new ones, designing GUI in LuaU efficiently, creating data stores using **Promises**, etc.
+
+This module is primarily used for multiple purposes, which may even convert 15 lines into ~5 **(assuming we're talking about remote events)**.
+
+In addition, you can make your code look fancier and more readable, while even optimizing some parts of it using **VexKit**.
+
+If you wish to learn how to use it, the tutorial is below, scroll to the module you would like to learn in Packages.
 
 > [!IMPORTANT]
-> Before be begin, I would like to credit these people for:
+> Before we begin, I would like to credit these people for:
 > 
 > **PS/Xbox check:** https://devforum.roblox.com/t/is-there-anyway-to-tell-if-a-person-is-on-an-xbox-or-a-ps4ps5/2645926/12
 >
 > **spr:** https://github.com/Fraktality/spr
 >
 > Thank you both, I appreciate y'all.
+
+> [!WARNING]
+> This tutorial is not fully finished, some functions may be changed in the future.
+> If you see a module that has no documentation yet, you can see its code and see how its supposed to look.
+
+With that out of the way, let's continue with the tutorial now.
 
 # Documentation 📃
 ## Core ❤️
