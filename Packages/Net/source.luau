@@ -30,7 +30,7 @@ function Net:Subscribe(Name: string, Callback: Callback)
 		return
 	end
 	
-	local DecryptedCallback = function(Player: Player, Data: buffer, Length: number)
+	local DecryptedCallback = function(Player: Player, _, Data: buffer, Length: number)
 		if typeof(Data) == "buffer" and typeof(Length) == "number" then
 			local ok, given = pcall(buffer.readstring, Data, 0, Length)
 			if ok then
@@ -84,14 +84,17 @@ function Net:Request(Name: string, ...)
 	return Promise.new(function(res, rej)
 		local Remote: RemoteFunction? = script:FindFirstChild(Name)
 		if Remote and Remote:IsA("RemoteFunction") then
+			--print('Found remote:', Remote:GetFullName())
 			local ok, given = pcall(HttpService.JSONEncode, HttpService, table.unpack(Data))
 			if ok then
 				given = Net.XOR:DoIt(given, KeyArg)
+				--print("Encrypted arguments:", given)
 				local SendData = buffer.create(#given)
 				buffer.writestring(SendData, 0, given, #given)
+				--print("Buffer with arguments:", SendData)
 				return res(
 					Remote:InvokeServer(
-						SendData, #given
+						"\000", SendData, #given
 					)
 				)
 			else
